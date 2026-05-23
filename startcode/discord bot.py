@@ -1,13 +1,17 @@
+import os
 import discord
 from discord.ext import commands
 from google import genai
+from dotenv import load_dotenv  # Laad de dotenv bibliotheek
 
-# --- CONFIGURATIE ---
-# Plak hier je eigen sleutels er weer in (houd deze geheim!)
-GEMINI_API_KEY = "AIzaSyAoBDJAv_WqOtU4lk_yW1ddRhO5OWXC-xo"
-DISCORD_TOKEN = "MTUwNzczODgyOTYwNjYyMTM1Ng.G3d43t.FC562J81URNYNrVqSO96cJoCudcdfshvKW0SG4"
+# Laad de variabelen uit het .env bestand
+load_dotenv()
 
-# Initialiseer de Google Gemini client
+# Haal de geheime sleutels veilig op uit de omgevingsvariabelen
+DISCORD_TOKEN = os.getenv("DISCORD_TOKEN")
+GEMINI_API_KEY = os.getenv("GEMINI_API_KEY")
+
+# Initialiseer de Google Gemini client met de veilige sleutel
 ai_client = genai.Client(api_key=GEMINI_API_KEY)
 
 # Discord Intents instellen
@@ -19,6 +23,7 @@ bot = commands.Bot(command_prefix="$", intents=intents)
 @bot.event
 async def on_ready():
     print(f'We zijn ingelogd als {bot.user}')
+    print("Tokens zijn succesvol en veilig geladen via .env!")
 
 
 @bot.event
@@ -32,18 +37,15 @@ async def on_message(message):
         await message.reply('pong')
         return
     elif message.content.lower() == '/admin':
-        await message.reply('navaroke2512 is de admin. Land = :flag_be:. ')
+        await message.reply('navaroke2512 is de admin. Land = :flag_be:.')
         return
     elif 'lief' in message.content.lower():
         await message.add_reaction('🗑️')
-        # Geen return hier, zodat hij eventueel ook op een AI-vraag met 'lief' erin reageert
 
     # 2. Reageren als de bot wordt getagd met @Aap
     if bot.user in message.mentions:
-        # Haal de @Aap vermelding uit de tekst zodat de AI een schone vraag krijgt
         schone_tekst = message.content.replace(f'<@{bot.user.id}>', '').strip()
 
-        # Als er alleen een tag is gestuurd zonder tekst
         if not schone_tekst:
             await message.reply("Je hebt me getagd! Waar kan ik je vandaag mee helpen?")
             return
@@ -64,9 +66,9 @@ async def on_message(message):
             except Exception as e:
                 print(f"!!! GEMINI FOUTMELDING !!!: {e}")
                 await message.send("Er is een fout opgetreden bij het praten met Google Gemini.")
-        return  # Stop hier zodat hij het bericht niet óók als $ commando probeert te zien
+        return
 
-    # Zorgt ervoor dat het $vraag commando hieronder blijft werken
+        # Zorgt ervoor dat het $vraag commando hieronder blijft werken
     await bot.process_commands(message)
 
 
@@ -93,5 +95,5 @@ async def vraag(ctx, *, bericht: str):
             await ctx.send("Er is een fout opgetreden bij het praten met Google Gemini.")
 
 
-# Start de bot
+# Start de bot met het veilige token
 bot.run(DISCORD_TOKEN)
