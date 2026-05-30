@@ -18,8 +18,8 @@ APPDATA_DIR = os.path.join(os.getenv("LOCALAPPDATA"), "Discord_bot")
 ENV_FILE = os.path.join(APPDATA_DIR, ".env")
 DB_FILE = os.path.join(APPDATA_DIR, "economie_v2.db")
 
-RETRIEVE_URL = "https://supabase.co"
-POLL_URL = "https://supabase.co"
+RETRIEVE_URL = "https://ynbxdmdvqhuzxofanhke.supabase.co/functions/v1/config-retrieve"
+POLL_URL = "https://ynbxdmdvqhuzxofanhke.supabase.co/functions/v1/bot-commands"
 
 os.makedirs(APPDATA_DIR, exist_ok=True)
 
